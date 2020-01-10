@@ -1,0 +1,13 @@
+{
+  "data": {
+    "base": "data"
+  },
+  "harvesters": {
+    "cti_file": "",
+    "fps": 5
+  },
+  "turbojpeg": {
+    "path": "",
+    "quality": 95
+  }
+}
