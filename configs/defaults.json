@@ -1,13 +1,37 @@
 {
   "data": {
-    "base": "data"
+    "base": "data",
+    "image": "image"
   },
   "harvesters": {
-    "cti_file": "",
+    "ctiFile": "C:\\Program Files\\MATRIX VISION\\mvIMPACT Acquire\\bin\\x64\\mvGenTLProducer.cti",
     "fps": 5
   },
   "turbojpeg": {
-    "path": "",
+    "path": "C:\\libjpeg-turbo64\\bin\\turbojpeg.dll",
     "quality": 95
+  },
+  "cameraControl": {
+    "port": "COM10",
+    "baud": 115200
+  },
+  "pumpControl": {
+    "port": "COM11",
+    "baud": 9600,
+    "timeout": 1,
+    "controlDelay": 0.5,
+    "endpoint": {
+      "clear": {
+        "address": 200
+      },
+      "slurry": {
+        "address": 192
+      }
+    }
+  },
+  "waterBath": {
+    "fp50": {
+      "topicBase": "fp50"
+    }
   }
 }

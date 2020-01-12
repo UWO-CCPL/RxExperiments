@@ -1,7 +1,11 @@
 import logging
 
+import ipywidgets as widgets
+from datamodel.image import Image
 from sink.base_sink import BaseSink
 import plotly.graph_objects as go
+
+from matplotlib import pyplot as plt
 
 
 class PlotlyVisualizationSink(BaseSink):
@@ -27,3 +31,19 @@ class PlotlyVisualizationSink(BaseSink):
             self.logger.debug("plot updated")
         except Exception as ex:
             self.logger.error("failed to update plot", exc_info=ex)
+
+
+class JupyterImageSink(BaseSink):
+    figure: widgets.Image
+
+    def __init__(self, figure=None, name="jupyter_image"):
+        super().__init__(name, on_next=self.on_image)
+
+        self.figure = figure or widgets.Image()
+        self.figure.format = "jpeg"
+        self.figure.width = 800
+        self.figure.height = 600
+
+    def on_image(self, x: Image):
+        assert isinstance(x, Image)
+        self.figure.value = x.jpeg

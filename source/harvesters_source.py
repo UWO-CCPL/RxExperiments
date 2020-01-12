@@ -1,5 +1,6 @@
 import configparser
 import logging
+import time
 from typing import Optional
 import numpy as np
 from genicam.gentl import TimeoutException
@@ -16,25 +17,30 @@ SECTION = "harvesters"
 
 class HarvestersSource(Node, Observable):
     def __init__(self):
-        self.logger = logging.getLogger("HarvestersSource")
+        Node.__init__(self, "Harvesters")
+        Observable.__init__(self, self._on_subscribe)
 
-        super().__init__(self._on_subscribe)
+        self.harvester = Harvester()
+        self.cti_file = self.config[SECTION]["ctiFile"]
+        self.harvester.add_cti_file(self.cti_file)
+        self.logger.info(f"Loaded harvester cti file {self.cti_file}")
+        self.harvester.update_device_info_list()
+        self.logger.info(f"Found {len(self.harvester.device_info_list)} devices.")
 
     def _on_subscribe(self, observer: Observer, scheduler=None):
-        scheduler = scheduler or NewThreadScheduler()
-
-        harvester = Harvester()
-        harvester.add_cti_file(self.config[SECTION]["cti_file"])
-        harvester.update_device_info_list()
-        self.acquirer = acquirer = harvester.create_image_acquirer(0)
+        self.acquirer = self.harvester.create_image_acquirer(list_index=0)
         self.reload_camera_driver()
         self.configure_callback(observer)
-        acquirer.start_image_acquisition()
+        self.acquirer.start_image_acquisition()
 
         def dispose():
-            if acquirer.is_acquiring_images():
-                acquirer.stop_image_acquisition()
-            acquirer.destroy()
+            def _async_dispose(*args):
+                # prevent join in the same thread.
+                self.logger.info("Stopping image acquisition")
+                self.acquirer.stop_image_acquisition()
+                self.acquirer.destroy()
+                self.logger.info("Stopped image acquisition")
+            (scheduler or NewThreadScheduler()).schedule(_async_dispose)
 
         return Disposable(dispose)
 
@@ -57,8 +63,7 @@ class HarvestersSource(Node, Observable):
                 width = component.width
                 height = component.height
                 content = component.data.reshape(height, width)
-                time = buffer.timestamp_ns
-                observer.on_next(Image(content.copy(), time / 1e9))
+                observer.on_next(Image(content.copy(), time.time_ns()))
                 buffer.queue()
             except TimeoutException as ex:
                 pass

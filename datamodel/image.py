@@ -12,7 +12,7 @@ class Image:
     @property
     def jpeg(self):
         if self._jpeg is None:
-            self._jpeg = image_encoder.get_encoder()(self.image)
+            self._jpeg = image_encoder.ImageEncoder.encode(self.image)
 
         return self._jpeg
 
