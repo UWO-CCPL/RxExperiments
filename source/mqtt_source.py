@@ -1,6 +1,8 @@
 from typing import Dict
 import uuid
 import rx
+from paho.mqtt.client import MQTTMessage
+from rx import operators
 from rx import typing as rx_t, subject
 from rx.disposable import CompositeDisposable
 
@@ -20,13 +22,14 @@ class MQTTSource(Node, rx.Observable):
         self.client = client
         self.message_subject = subject.Subject()
         self.upstream_subscribed = False
-        super().__init__(subscribe=self.subscribe_func)
+        Node.__init__(self, name=topic)
+        rx.Observable.__init__(self, subscribe=self.subscribe_func)
 
     def subscribe_func(self, observer, scheduler=None) -> rx_t.Disposable:
         if not self.upstream_subscribed:
             self.client.connected_subject.subscribe(self.configure_subscription)
             logging.debug("subscribe to on_connect event")
-        subscription = self.message_subject.subscribe(observer)
+        subscription = self.message_subject.pipe(operators.map(self.transform)).subscribe(observer)
 
         def dispose():
             self.client.message_callback_remove(self.topic)
@@ -38,3 +41,6 @@ class MQTTSource(Node, rx.Observable):
             self.client.subscribe(self.topic, self.qos, self.options, self.properties)
             self.client.message_callback_add(self.topic,
                                              lambda client, userdata, message: self.message_subject.on_next(message))
+
+    def transform(self, x):
+        return x
