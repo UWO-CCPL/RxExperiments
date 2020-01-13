@@ -1,8 +1,7 @@
 import logging
-import queue
-from logging.handlers import QueueHandler, QueueListener
-from typing import Optional, IO
+import os
 
+from configs.config import GlobalConfig
 import colorlog
 import ipywidgets as widgets
 
@@ -37,6 +36,12 @@ def configure_logger_to_output(logger: logging.Logger = logging.root, output=Non
             'CRITICAL': 'red,bg_white',
         }
     ))
-    logger.setLevel(level)
     logger.addHandler(handler)
+
+    config = GlobalConfig.get_global_config()
+    handler = logging.FileHandler(os.path.join(config["data"]["base"], "events.log"))
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-6s %(message)s\n", datefmt="%Y-%m-%d %H:%M:%S"))
+    logger.addHandler(handler)
+
+    logger.setLevel(level)
     return output
