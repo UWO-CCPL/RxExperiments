@@ -8,7 +8,7 @@ from utils.mqtt_wrapper import MQTTClientWrapper
 from .base_control import BaseControl
 from utils.observable_factory import from_callback
 
-
+# TODO: do not output!
 class FP50Command:
     def __init__(self, setpoint):
         self.setpoint = setpoint
@@ -41,10 +41,16 @@ class FP50Control(BaseControl):
         self.client.subscribe(self.topic_base + "/temperature")
         self.client.subscribe(self.topic_base + "/setpoint")
 
+        power_sub = Subject()
+        temp_sub = Subject()
+        setpoint_sub = Subject()
+        self.client.message_callback_add(self.topic_base + "/power", lambda *args: power_sub.on_next(args))
+        self.client.message_callback_add(self.topic_base + "/temperature", lambda *args: temp_sub.on_next(args))
+        self.client.message_callback_add(self.topic_base + "/setpoint", lambda *args: setpoint_sub.on_next(args))
         rx.combine_latest(
-            from_callback(self.client.message_callback_add)(self.topic_base + "/power"),
-            from_callback(self.client.message_callback_add)(self.topic_base + "/temperature"),
-            from_callback(self.client.message_callback_add)(self.topic_base + "/setpoint"),
+            power_sub,
+            temp_sub,
+            setpoint_sub
         ).pipe(
             operators.map(lambda x: FP50Message(
                 float(x[0][2].payload),
@@ -58,7 +64,7 @@ class FP50Control(BaseControl):
     def on_command(self, x):
         assert isinstance(x, FP50Command)
         self.client.publish(self.topic_base + "/setpoint", str(x.setpoint), retain=True)
-        self.logger.info(f"setpoint updated = {x.setpoint}")
+        self.logger.debug(f"setpoint updated = {x.setpoint}")
 
     def on_subscribe(self, observer, scheduler=None):
         return self.message_subject.subscribe(observer, scheduler)

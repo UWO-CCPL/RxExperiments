@@ -1,37 +1,47 @@
 {
   "data": {
-    "base": "data",
+    "base": "data/demo",
     "image": "image"
   },
   "harvesters": {
-    "ctiFile": "C:\\Program Files\\MATRIX VISION\\mvIMPACT Acquire\\bin\\x64\\mvGenTLProducer.cti",
-    "fps": 5
+    "ctiFile": "C:\\Program Files (x86)\\Common Files\\MVS\\Runtime\\Win64_x64\\MvProducerU3V.cti",
+    "acquisitionFrameRate": 1,
+    "lineMode": "Strobe",
+    "lineSelector": "Line2",
+    "lineInverter": true,
+    "extraNodes": {
+      "StrobeEnable": true,
+      "StrobeLineDelay": 0,
+      "StrobeLineDuration": 10,
+      "StrobeLinePreDelay": 0
+    },
+    "exposureTime": 100,
+    "disableInternalLogger": true
   },
   "turbojpeg": {
     "path": "C:\\libjpeg-turbo64\\bin\\turbojpeg.dll",
-    "quality": 95
+    "quality": 100
   },
   "cameraControl": {
-    "port": "COM10",
+    "port": "COM4",
     "baud": 115200
   },
   "pumpControl": {
-    "port": "COM11",
-    "baud": 9600,
-    "timeout": 1,
-    "controlDelay": 0.5,
-    "endpoint": {
-      "clear": {
-        "address": 200
-      },
-      "slurry": {
-        "address": 192
-      }
-    }
+    "topicBase": "6712580"
   },
   "waterBath": {
     "fp50": {
-      "topicBase": "fp50"
+      "topicBase": "fp50",
+      "interval": 3.0
+    }
+  },
+  "switchValve": {
+    "topicBase": "14419835"
+  },
+  "ds18": {
+    "topicBase": "6714499",
+    "sensors": {
+      "28ff8eb164150149": "internal"
     }
   }
 }

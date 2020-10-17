@@ -1,7 +1,7 @@
 import os
 
 from datamodel.image import Image
-from sink.base_sink import BaseSink
+from sinks.base_sink import BaseSink
 from rx.subject import Subject
 
 class SaveImageSink(BaseSink):

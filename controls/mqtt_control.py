@@ -1,6 +1,5 @@
 from paho.mqtt.client import MQTTMessage
 from rx.disposable import Disposable
-
 from utils.mqtt_wrapper import MQTTClientWrapper
 from .base_control import BaseControl
 
@@ -25,6 +24,7 @@ class MQTTControl(BaseControl):
     def on_command(self, x):
         assert isinstance(x, MQTTControlMessage)
         self.client.publish(self.topic, x.message, self.qos, self.retain)
+        self.update_subject.on_next(x)
 
     def on_subscribe(self, observer, scheduler=None):
         self.client.subscribe(self.topic, self.qos)

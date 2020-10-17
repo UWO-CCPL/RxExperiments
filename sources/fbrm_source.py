@@ -1,12 +1,10 @@
 import json
 
+import rx
 from paho.mqtt.client import MQTTMessage
-from rx import operators
-from rx.scheduler import ImmediateScheduler
 
 from utils import mqtt_wrapper
 from .mqtt_source import MQTTSource
-import rx
 
 
 class FBRMSource(MQTTSource):

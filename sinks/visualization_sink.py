@@ -2,7 +2,7 @@ import logging
 
 import ipywidgets as widgets
 from datamodel.image import Image
-from sink.base_sink import BaseSink
+from sinks.base_sink import BaseSink
 import plotly.graph_objects as go
 
 from matplotlib import pyplot as plt

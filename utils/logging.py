@@ -25,7 +25,7 @@ def configure_logger_to_output(logger: logging.Logger = logging.root, output=Non
     output = output or widgets.Output()
     handler = NotebookOutputHandler(output)
     handler.setFormatter(colorlog.ColoredFormatter(
-        "%(asctime)s %(log_color)s%(levelname)-6s%(reset)s %(blue)s%(message)s\n",
+        "%(asctime)s %(log_color)s%(levelname)-6s%(reset)s %(name)s: %(blue)s%(message)s\n",
         reset=True,
         datefmt="%Y-%m-%d %H:%M:%S",
         log_colors={
@@ -40,7 +40,7 @@ def configure_logger_to_output(logger: logging.Logger = logging.root, output=Non
 
     config = GlobalConfig.get_global_config()
     handler = logging.FileHandler(os.path.join(config["data"]["base"], "events.log"))
-    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-6s %(message)s\n", datefmt="%Y-%m-%d %H:%M:%S"))
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-6s %(name)s: %(message)s\n", datefmt="%Y-%m-%d %H:%M:%S"))
     logger.addHandler(handler)
 
     logger.setLevel(level)

@@ -40,18 +40,18 @@ class CameraControl(SerialControl):
         assert isinstance(x, CameraControlCommand)
         if x.power is not None:
             self.serial.write(f"s_power {1 if x.power else 0}\n".encode())
-            self.logger.info("power on" if x.power else "power off")
+            self.logger.debug("power on" if x.power else "power off")
 
         if x.trigger is not None:
             self.serial.write(
                 "arm_trigger\n".encode() if x.trigger else
                 "disarm_trigger\n".encode()
             )
-            self.logger.info("trigger armed" if x.trigger else "trigger disarmed")
+            self.logger.debug("trigger armed" if x.trigger else "trigger disarmed")
 
         if x.exposure is not None:
             tick = int(x.exposure * 72)
             self.serial.write(
-                f"s_exposure {tick}\n".encode()
+                f"s_exposure {tick}\ncommit\n".encode()
             )
-            self.logger.info(f"exposure tick set to {tick}")
+            self.logger.debug(f"exposure tick set to {tick}")

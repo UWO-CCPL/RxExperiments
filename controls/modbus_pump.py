@@ -70,11 +70,11 @@ class ModbusPumpControl(SerialControl):
     def set_speed(self, slurry_speed, clear_speed):
         if slurry_speed is not None and slurry_speed != self.state[0]:
             self.ctrl_pump(self.pump_control_config["endpoint"]["slurry"]["address"], slurry_speed)
-            self.logger.info(f"Slurry pump speed updated: {slurry_speed}")
+            self.logger.debug(f"Slurry pump speed updated: {slurry_speed}")
             self.state[0] = slurry_speed
         if clear_speed is not None and clear_speed != self.state[1]:
             self.ctrl_pump(self.pump_control_config["endpoint"]["clear"]["address"], clear_speed)
-            self.logger.info(f"Clear pump speed updated: {clear_speed}")
+            self.logger.debug(f"Clear pump speed updated: {clear_speed}")
             self.state[1] = clear_speed
 
     def ctrl_pump(self, unit, speed):
