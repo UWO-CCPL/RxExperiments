@@ -13,9 +13,9 @@ import pickle
 class SaveDataSink(BaseSink):
     df: DataFrame
 
-    def __init__(self, name, key, interval=10, scheduler=None, auto_timestamp=False):
+    def __init__(self, name, key=None, interval=10, scheduler=None, auto_timestamp=False):
         """
-        Automatic data store as hdf5. The on_next message must be of pandas.Dataframe
+        Automatic data store as pidle. The on_next message must be of pandas.Dataframe
         :param auto_timestamp:
         :param store_name: file name of the stored file. The target_dir option is respected in configs.ini
         :param interval: if None, store every time when new data come. Otherwise, only store after interval seconds.
@@ -24,7 +24,7 @@ class SaveDataSink(BaseSink):
 
         self.auto_timestamp = auto_timestamp
         self.key = key
-        self.save_path = os.path.join(self.config["data"]["base"], name + ".h5")
+        self.save_path = os.path.join(self.config["data"]["base"], name + ".pkl")
         self.interval = interval
         self.df = pd.DataFrame()
 
@@ -56,7 +56,10 @@ class SaveDataSink(BaseSink):
 
     def save_data(self):
         try:
-            self.df.to_hdf(self.save_path, self.key, append=True, format="table")
+            if os.path.exists(self.save_path):
+                old = pd.read_pickle(self.save_path)
+                self.df = self.df.append(old)
+            self.df.to_pickle(self.save_path)
             self.df = DataFrame()
             self.logger.debug(f"file saved")
         except Exception as ex:
