@@ -13,7 +13,7 @@ import pickle
 class SaveDataSink(BaseSink):
     df: DataFrame
 
-    def __init__(self, name, key=None, interval=10, scheduler=None, auto_timestamp=False):
+    def __init__(self, name, key=None, interval=120, scheduler=None, auto_timestamp=False):
         """
         Automatic data store as pidle. The on_next message must be of pandas.Dataframe
         :param auto_timestamp:

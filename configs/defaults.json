@@ -1,18 +1,18 @@
 {
   "data": {
-    "base": "data/demo",
+    "base": "D:\\Experiments Data\\Exp1 Rep without heater Nov 24",
     "image": "image"
   },
   "harvesters": {
     "ctiFile": "C:\\Program Files (x86)\\Common Files\\MVS\\Runtime\\Win64_x64\\MvProducerU3V.cti",
-    "acquisitionFrameRate": 1,
+    "acquisitionFrameRate": 2,
     "lineMode": "Strobe",
     "lineSelector": "Line2",
     "lineInverter": true,
     "extraNodes": {
       "StrobeEnable": true,
       "StrobeLineDelay": 0,
-      "StrobeLineDuration": 10,
+      "StrobeLineDuration": 20,
       "StrobeLinePreDelay": 0
     },
     "exposureTime": 100,
@@ -41,7 +41,14 @@
   "ds18": {
     "topicBase": "6714499",
     "sensors": {
-      "28ff8eb164150149": "internal"
+      "28ff8eb164150149": {
+        "name": "internal",
+        "slope": 1.0,
+        "interception": 0.2778
+      }
     }
+  },
+  "concentration": {
+    "model": "D:\\Experiments Data\\Nov13 Exp1\\raman_model.pkl"
   }
 }

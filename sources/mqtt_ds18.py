@@ -16,8 +16,18 @@ class MQTTDS18Source(MQTTSource):
 
     def transform(self, x):
         addr = str(x.topic).split("/")[-1]
+        raw = float(x.payload)
+        try:
+            conf = self.sensors[addr]
+        except:
+            conf = {"name": "", "slope": 1., "interception": 0.}
+
+        name = conf["name"]
+        value = raw * conf["slope"] + conf["interception"]
+
         return {
-            "name": self.sensors.get(addr, None),
+            "name": name,
             "addr": addr,
-            "value": float(x.payload)
+            "value": value,
+            "raw": raw
         }
